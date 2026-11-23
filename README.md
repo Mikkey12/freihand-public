@@ -26,3 +26,9 @@ dotnet publish src/Freihand.App/Freihand.App.csproj -c Release -r win-x64 --self
 dotnet test Freihand.slnx -c Release --filter "Kategorie!=Desktop"
 dotnet test tests/Freihand.App.ReviewTests -c Release --filter "Kategorie!=Desktop"
 ```
+
+## Lizenz und Beiträge
+
+Für den Freihand-eigenen Code beider Ausgaben gilt die [Sustainable Use License 1.0](LICENSE). Sie erlaubt die persönliche Nutzung und den Einsatz für eigene interne Geschäftszwecke, einschliesslich eigener Anpassungen. Die Weitergabe an Dritte ist unter dieser Lizenz nur kostenlos für nichtkommerzielle Zwecke erlaubt. Bibliotheken und Modelle unterliegen ihren jeweiligen Lizenzen.
+
+Verbesserungen kannst du über einen Fork und einen Pull Request vorschlagen. Die Projektleitung entscheidet über die Übernahme in die offizielle Version.
