@@ -1,0 +1,73 @@
+# Automatische Prüfung jedes Pull Requests
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  core-linux:
+    name: Kern und Adapter (Linux)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Wiederherstellen
+        run: dotnet restore tests/Freihand.Core.Tests --locked-mode
+      - name: Bauen
+        run: dotnet build tests/Freihand.Core.Tests -c Release --no-restore
+      - name: Testen
+        run: dotnet test tests/Freihand.Core.Tests -c Release --no-build
+
+  windows:
+    name: Alle Projekte (Windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Wiederherstellen
+        run: dotnet restore Freihand.slnx --locked-mode
+      - name: Bauen
+        run: dotnet build Freihand.slnx -c Release --no-restore
+      - name: Testen
+        # Stufe C des P7-Konzepts (Kategorie Desktop) braucht einen echten Desktop und läuft nur bei manueller Prüfung
+        run: dotnet test Freihand.slnx -c Release --no-build --filter "Kategorie!=Desktop"
+      - name: App-Zusammenbau testen (einzeln)
+        # Nicht parallel zu den Kerntests: C07 und DeltaReleaseProbe messen Wartezeiten auf den Threadpool und liefen
+        # parallel zur Solution in 2 von 3 Läufen in die Zeitgrenze, einzeln 10 von 10 grün (Diagnose PR #48, 11.11.2026)
+        run: |
+          dotnet restore tests/Freihand.App.ReviewTests --locked-mode
+          dotnet test tests/Freihand.App.ReviewTests -c Release --no-restore
+      - name: Geschäftsausgabe bauen und prüfen (GE-02)
+        # Eigenständig für Windows x64, eigene Sperrdatei; im Ergebnis darf kein Online- und kein CUDA-Teil stehen.
+        # Gleiche Prüfungen wie tools/Geschaeft/Freihand-Geschaeftspaket.ps1; die Ausgabe liegt ausserhalb des
+        # Repositorys, damit die Prüfung auf geänderte Dateien (Sperrdateien) nur echte Änderungen meldet.
+        shell: pwsh
+        run: |
+          $ausgabe = Join-Path $env:RUNNER_TEMP 'geschaeft'
+          dotnet publish src/Freihand.App/Freihand.App.csproj -c Release -r win-x64 --self-contained true -p:FreihandAusgabe=Geschaeft -p:RestoreLockedMode=true -o $ausgabe
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          if (git status --porcelain) { git status --porcelain; exit 1 }
+          $verboten = Get-ChildItem -Recurse $ausgabe | Where-Object { $_.Name -like 'Anthropic*' -or $_.Name -like 'Freihand.Online*' -or $_.FullName -match '[\\/]runtimes[\\/]cuda[\\/]' -or $_.Extension -in '.so', '.dylib' }
+          if ($verboten) { $verboten | ForEach-Object FullName; exit 1 }
+          foreach ($datei in 'Freihand.exe', 'Freihand.dll', 'Freihand.Recognizer.exe', 'Freihand.Zielprobe.exe', 'Fixtures/au01-testtext.txt', 'runtimes/vulkan/win-x64/ggml-vulkan-whisper.dll', 'runtimes/win-x64/whisper.dll') {
+            if (-not (Test-Path (Join-Path $ausgabe $datei))) { "$datei fehlt"; exit 1 }
+          }
+          # Sicherheitsprüfung, S1: Die Geschäftsausgabe kennt kein Messprotokoll per Umgebungsvariable, nur das Tagesprotokoll
+          if ([Text.Encoding]::ASCII.GetString([IO.File]::ReadAllBytes((Join-Path $ausgabe 'Freihand.dll'))).Contains('MeasurementLog')) { 'Messprotokoll in der Geschäftsausgabe'; exit 1 }

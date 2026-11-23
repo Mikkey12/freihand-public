@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Messwerkzeug für den Machbarkeitstest -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <RootNamespace>Freihand.Benchmark</RootNamespace>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>false</SelfContained>
+    <!-- für den erzeugten Aufruf von GetSystemPowerStatus (LibraryImport) -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Freihand.Benchmark.Tests" />
+  </ItemGroup>
+
+  <!-- Befehl chain: Freihand-Kette mit dem P8-Erkenner (P8-Konzept, Kapitel 3.2) -->
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Freihand.Windows\Freihand.Windows.csproj" />
+    <ProjectReference Include="..\..\src\Freihand.Recognizer\Freihand.Recognizer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NAudio.Core" />
+    <PackageReference Include="NAudio.WinMM" />
+    <!-- Parakeet TDT über sherpa-onnx, nur für den Vergleich im Machbarkeitstest -->
+    <PackageReference Include="org.k2fsa.sherpa.onnx" />
+    <PackageReference Include="Whisper.net" />
+    <PackageReference Include="Whisper.net.Runtime" />
+    <!-- nur privat für die CUDA-Grafikkarte; braucht das CUDA Toolkit 13 -->
+    <PackageReference Include="Whisper.net.Runtime.Cuda.Windows" />
+    <!-- Vulkan, z. B. für die Vulkan-Grafik des Referenznotebook (QM-08) -->
+    <PackageReference Include="Whisper.net.Runtime.Vulkan" />
+  </ItemGroup>
+
+</Project>

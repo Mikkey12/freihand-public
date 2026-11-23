@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:freihand:schema:profiles:1",
+  "title": "Freihand – Profile, Version 1",
+  "description": "Profile als Daten (OF-01, BA-01, BA-21). Die App prüft beim Import strenger als dieses Schema: zugelassene Endpunkte, keine Geheimnisse, keine ausführbaren Inhalte, eindeutige Bezeichner.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "schemaVersion", "profiles"],
+  "properties": {
+    "kind": { "const": "freihand.profiles" },
+    "schemaVersion": { "const": 1 },
+    "profiles": {
+      "type": "array",
+      "maxItems": 64,
+      "items": { "$ref": "#/$defs/profile" }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^\\S(.*\\S)?$"
+    },
+    "endpoint": {
+      "description": "Absolute Adresse ohne Zugangsdaten, Abfrage oder Anker; https, http nur für die Loopback-Adresse (WE-16). Muss beim Import zugelassen sein (OF-01).",
+      "type": "string",
+      "maxLength": 2048,
+      "pattern": "^https?://[^?#@\\s]+$"
+    },
+    "recognition": {
+      "description": "Erkennungsweg (WE-01). Verlässt das Audio das Gerät, ist ein Endpunkt nötig (WE-03).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["route"],
+      "properties": {
+        "route": { "enum": ["online", "home", "device", "companyService"] },
+        "endpoint": { "$ref": "#/$defs/endpoint" }
+      },
+      "if": { "properties": { "route": { "const": "device" } } },
+      "then": { "not": { "required": ["endpoint"] } },
+      "else": { "required": ["endpoint"] }
+    },
+    "transform": {
+      "description": "Umformweg (WE-01). „none“ ist exaktes Diktat (BA-12); „local“ heisst auf diesem Gerät.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["route"],
+      "properties": {
+        "route": { "enum": ["none", "local", "home", "privateProvider", "companyService"] },
+        "endpoint": { "$ref": "#/$defs/endpoint" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "route": { "const": "none" } } },
+          "then": { "not": { "required": ["endpoint"] } }
+        },
+        {
+          "if": { "properties": { "route": { "enum": ["home", "privateProvider", "companyService"] } } },
+          "then": { "required": ["endpoint"] }
+        }
+      ]
+    },
+    "audioSource": {
+      "description": "Audioquelle (ER-12).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind"],
+      "properties": {
+        "kind": { "enum": ["systemDefault", "device"] },
+        "deviceId": { "allOf": [{ "$ref": "#/$defs/text" }, { "maxLength": 256 }] },
+        "displayName": { "allOf": [{ "$ref": "#/$defs/text" }, { "maxLength": 64 }] }
+      },
+      "if": { "properties": { "kind": { "const": "device" } } },
+      "then": { "required": ["deviceId", "displayName"] },
+      "else": {
+        "allOf": [
+          { "not": { "required": ["deviceId"] } },
+          { "not": { "required": ["displayName"] } }
+        ]
+      }
+    },
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "recognition",
+        "transform",
+        "dataClass",
+        "language",
+        "recordingMode",
+        "audioSource",
+        "output",
+        "formatRules",
+        "strictness"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "allOf": [{ "$ref": "#/$defs/text" }, { "maxLength": 64 }] },
+        "description": { "allOf": [{ "$ref": "#/$defs/text" }, { "maxLength": 500 }] },
+        "recognition": { "$ref": "#/$defs/recognition" },
+        "transform": { "$ref": "#/$defs/transform" },
+        "dataClass": {
+          "description": "Datenklasse (WE-03); Klassen der IT folgen mit GE-04.",
+          "enum": ["oeffentlich", "intern", "vertraulich"]
+        },
+        "language": {
+          "description": "BCP-47-Kennung, z. B. de-CH (Grundentscheid 1).",
+          "type": "string",
+          "pattern": "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-([A-Z]{2}|[0-9]{3}))?$"
+        },
+        "recordingMode": {
+          "description": "Standard-Aufnahmeart (BE-05); Ein/Aus ist Standard (BF-06).",
+          "enum": ["toggle", "hold"]
+        },
+        "audioSource": { "$ref": "#/$defs/audioSource" },
+        "output": {
+          "description": "Ausgabe (AU-04, AU-05); die Zwischenablage ist in strengen Profilen gesperrt (AU-03).",
+          "enum": ["dictationWindow", "boundTarget", "clipboard"]
+        },
+        "formatRules": {
+          "description": "Verweis auf einen Satz Formatregeln (BA-17).",
+          "$ref": "#/$defs/id"
+        },
+        "strictness": {
+          "description": "„strict“ weist unbekannte Eingabefelder ab (SI-04).",
+          "enum": ["standard", "strict"]
+        }
+      },
+      "if": { "properties": { "strictness": { "const": "strict" } } },
+      "then": { "properties": { "output": { "not": { "const": "clipboard" } } } }
+    }
+  }
+}

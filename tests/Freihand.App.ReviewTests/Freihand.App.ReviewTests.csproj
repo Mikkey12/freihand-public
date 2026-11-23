@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <Using Include="Xunit" />
+    <ProjectReference Include="../../src/Freihand.Adapters/Freihand.Adapters.csproj" />
+    <!-- Unveränderter echter Zusammenbau, aber ohne WPF/Windows/Erkennerprozesse ausgeführt. -->
+    <Compile Include="../../src/Freihand.App/App.xaml.cs" Link="App.xaml.cs" />
+    <Compile Include="../../src/Freihand.App/StatusText.cs" Link="StatusText.cs" />
+    <Compile Include="../../src/Freihand.App/PillPresenter.cs" Link="PillPresenter.cs" />
+    <Compile Include="../../src/Freihand.App/Edition.cs" Link="Edition.cs" />
+    <Compile Include="../Freihand.Core.Tests/App/ControllerFakes.cs" Link="ControllerFakes.cs" />
+  </ItemGroup>
+</Project>

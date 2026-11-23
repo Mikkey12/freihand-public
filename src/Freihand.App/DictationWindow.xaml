@@ -1,0 +1,90 @@
+<Window x:Class="Freihand.App.DictationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Freihand – Diktatfenster"
+        Width="580" Height="480" MinWidth="380" MinHeight="300"
+        ThemeMode="System"
+        ShowInTaskbar="True"
+        WindowStartupLocation="CenterScreen">
+  <!-- Diktatfenster: normales Fenster, Stil von Windows 11, hell und
+       dunkel nach Windows. Esc blendet es aus; alle Knöpfe sind mit Alt+Buchstabe und Tab erreichbar. -->
+  <DockPanel Margin="16">
+    <!-- Werkzeugleiste „Umformen“ (Kapitel 7, BA-10; Beta B8): Korrigieren und Glätten, nur auf Knopfdruck, Weg sichtbar -->
+    <Border x:Name="ToolbarHost" DockPanel.Dock="Top" Visibility="Collapsed" Margin="0,0,0,8">
+      <StackPanel Orientation="Horizontal">
+        <Button x:Name="CorrectButton" Content="_Fehler korrigieren" MinWidth="120" Click="OnCorrect"
+                ToolTip="Rechtschreibung, Grammatik und falsch erkannte Wörter; Auswahl oder ganzer Text" />
+        <Button x:Name="SmoothButton" Content="_Glätten" MinWidth="96" Margin="8,0,0,0" Click="OnSmooth"
+                ToolTip="Füllwörter und Wiederholungen weg, Sätze flüssiger; Auswahl oder ganzer Text" />
+        <TextBlock x:Name="RouteLine" Margin="12,0,0,0" VerticalAlignment="Center" Opacity="0.7" />
+      </StackPanel>
+    </Border>
+    <TextBlock x:Name="TargetLine" DockPanel.Dock="Top" Opacity="0.75" TextWrapping="Wrap" />
+    <TextBlock x:Name="Hint" DockPanel.Dock="Top" Margin="0,4,0,0" TextWrapping="Wrap" Visibility="Collapsed" />
+
+    <!-- Wiederherstellbar (Kapitel 3.3, AU-12): öffnen, kopieren, löschen; nie wird etwas eingefügt -->
+    <StackPanel x:Name="RecoveryPanel" DockPanel.Dock="Bottom" Margin="0,14,0,0" Visibility="Collapsed">
+      <Grid>
+        <TextBlock Text="Wiederherstellbar" FontWeight="SemiBold" VerticalAlignment="Center" />
+        <!-- Handtest vom 11.11.2026: alles auf einmal löschen, mit Bestätigung -->
+        <Button x:Name="DeleteAllButton" Content="_Alle löschen …" HorizontalAlignment="Right" Click="OnDeleteAll"
+                ToolTip="Löscht alle angezeigten gesicherten Texte, nach einer Rückfrage; der Text in der Schreibfläche bleibt." />
+      </Grid>
+      <TextBlock x:Name="RecoveryIssues" Margin="0,4,0,0" TextWrapping="Wrap" Visibility="Collapsed" />
+      <ScrollViewer MaxHeight="150" VerticalScrollBarVisibility="Auto" Margin="0,6,0,0">
+        <ItemsControl x:Name="Drafts">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <Grid Margin="0,3">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding Summary}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                  <Button Content="Öffnen" Margin="6,0,0,0" Tag="{Binding Id}" Click="OnOpenDraft" />
+                  <Button Content="Kopieren" Margin="6,0,0,0" Tag="{Binding Id}" Click="OnCopyDraft"
+                          IsEnabled="{Binding CanCopy}" />
+                  <Button Content="Löschen" Margin="6,0,0,0" Tag="{Binding Id}" Click="OnDeleteDraft" />
+                </StackPanel>
+              </Grid>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+    </StackPanel>
+
+    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+      <Button x:Name="CopyButton" Content="_Kopieren" MinWidth="96" Click="OnCopy" />
+      <Button x:Name="HandOverButton" Content="Ü_bernehmen" MinWidth="96" Margin="8,0,0,0" Click="OnHandOver" />
+      <Button x:Name="ClearButton" Content="_Leeren" MinWidth="96" Margin="8,0,0,0" Click="OnClear" />
+    </StackPanel>
+
+    <Grid Margin="0,10,0,0">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="*" />
+      </Grid.ColumnDefinitions>
+      <TextBox x:Name="Pad" Grid.ColumnSpan="2" AcceptsReturn="True" AcceptsTab="False" TextWrapping="Wrap" FontSize="15"
+               Padding="8" VerticalScrollBarVisibility="Auto" UndoLimit="500" TextChanged="OnPadChanged"
+               AutomationProperties.Name="Schreibfläche" />
+      <!-- Vorschau „Umformen“ neben dem Original (Kapitel 7, B8): geänderte Wörter markiert, ersetzt nie von selbst -->
+      <Border x:Name="PreviewHost" Grid.Column="1" Margin="10,0,0,0" Visibility="Collapsed" BorderThickness="1"
+              BorderBrush="#40808080" CornerRadius="4" Padding="8">
+        <DockPanel>
+          <TextBlock DockPanel.Dock="Top" Text="Vorschlag" FontWeight="SemiBold" />
+          <TextBlock x:Name="PreviewWarnings" DockPanel.Dock="Top" Margin="0,4,0,0" TextWrapping="Wrap" Foreground="DarkOrange"
+                     Visibility="Collapsed" />
+          <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
+            <Button x:Name="ReplaceButton" Content="_Ersetzen" MinWidth="96" Click="OnReplace"
+                    ToolTip="Ersetzt den Text durch den Vorschlag; Strg+Z holt das Original zurück" />
+            <Button x:Name="DiscardButton" Content="_Verwerfen" MinWidth="96" Margin="8,0,0,0" Click="OnDiscard" />
+          </StackPanel>
+          <ScrollViewer Margin="0,6,0,0" VerticalScrollBarVisibility="Auto">
+            <TextBlock x:Name="PreviewText" TextWrapping="Wrap" FontSize="15" AutomationProperties.Name="Vorschlag" />
+          </ScrollViewer>
+        </DockPanel>
+      </Border>
+    </Grid>
+  </DockPanel>
+</Window>

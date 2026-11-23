@@ -1,0 +1,59 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Oberfläche und Zusammenbau (WPF) -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <!-- Paket für Windows x64: in den Sperrdateien festgehalten, damit der Paketbau sie nie ändert -->
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>Freihand.App</RootNamespace>
+    <AssemblyName>Freihand</AssemblyName>
+    <!-- Symbol im Infobereich über NotifyIcon (P9 Diktatfenster, Kapitel 3.5); Teil von .NET, kein Paket -->
+    <UseWindowsForms>true</UseWindowsForms>
+    <!-- Stil von Windows 11 im Diktatfenster (Window.ThemeMode) ist in .NET 10 noch als Vorschau markiert -->
+    <NoWarn>$(NoWarn);WPF0001</NoWarn>
+  </PropertyGroup>
+
+  <!-- Geschäftsausgabe: dotnet publish -p:FreihandAusgabe=Geschaeft. Ohne jeden
+       Online-Baustein: kein Projekt Freihand.Online, kein Anthropic-SDK, keine Menüeinträge und Tasten fürs Korrigieren.
+       Eigene Sperrdatei, weil der Paketgraph ohne Freihand.Online ein anderer ist. -->
+  <PropertyGroup Condition="'$(FreihandAusgabe)' == 'Geschaeft'">
+    <DefineConstants>$(DefineConstants);GESCHAEFT</DefineConstants>
+    <NuGetLockFilePath>packages.geschaeft.lock.json</NuGetLockFilePath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- WPF und WinForms nebeneinander: nur WPF-Namen global, WinForms ausdrücklich mit Alias -->
+    <Using Remove="System.Windows.Forms" />
+    <Using Remove="System.Drawing" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Fenster ohne Anzeigen prüfen (Freihand.App.WindowTests) -->
+    <InternalsVisibleTo Include="Freihand.App.WindowTests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Freihand.Core\Freihand.Core.csproj" />
+    <ProjectReference Include="..\Freihand.Adapters\Freihand.Adapters.csproj" />
+    <!-- Korrigieren und Glätten online (Beta B8); nie im Erkennungsprozess (R48) -->
+    <ProjectReference Include="..\Freihand.Online\Freihand.Online.csproj" Condition="'$(FreihandAusgabe)' != 'Geschaeft'" />
+    <ProjectReference Include="..\Freihand.Windows\Freihand.Windows.csproj" />
+    <!-- Erkennungsprozess (P8) wird mit der App ausgeliefert und von ihr gestartet -->
+    <ProjectReference Include="..\Freihand.Recognizer\Freihand.Recognizer.csproj" />
+    <!-- „Feld messen“ (21.11.2026): das Messwerkzeug liegt neben Freihand.exe, auch in der Geschäftsausgabe -->
+    <ProjectReference Include="..\..\tools\Freihand.Zielprobe\Freihand.Zielprobe.csproj" />
+  </ItemGroup>
+
+  <!-- Geschäftspaket: nur x64, nur die Laufzeiten Vulkan und CPU -->
+  <Target Name="NurGeschaeftsLaufzeiten" AfterTargets="ComputeResolvedFilesToPublishList" Condition="'$(FreihandAusgabe)' == 'Geschaeft'">
+    <ItemGroup>
+      <!-- Nur Windows x64 mit Vulkan und CPU: keine CUDA-Laufzeit, keine anderen Prozessoren, keine anderen Systeme
+           (22.11.2026: das Erkennungspaket bringt auch runtimes/vulkan/linux-x64 mit) -->
+      <ResolvedFileToPublish Remove="@(ResolvedFileToPublish)"
+                             Condition="$([System.Text.RegularExpressions.Regex]::IsMatch($([System.String]::Copy('%(ResolvedFileToPublish.RelativePath)').Replace('\','/')), '^runtimes/(cuda/|win-x86/|win-arm64/|([^/]+/)?(linux|osx|macos|maccatalyst|ios|tvos|android|browser|freebsd|illumos|solaris))'))" />
+    </ItemGroup>
+  </Target>
+
+</Project>

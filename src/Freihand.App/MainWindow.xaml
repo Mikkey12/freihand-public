@@ -1,0 +1,47 @@
+﻿<Window x:Class="Freihand.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Freihand"
+        Height="420" Width="420"
+        Topmost="True"
+        ShowActivated="False"
+        ShowInTaskbar="True"
+        WindowStartupLocation="Manual"
+        ResizeMode="CanResizeWithGrip">
+  <!-- Statusfenster des Durchstichs: nimmt nie den Fokus (WS_EX_NOACTIVATE).
+       Seit P9 Diktatfenster (Kapitel 3.5) Diagnoseansicht, über das Menü des Infobereichs erreichbar. -->
+  <DockPanel Margin="12">
+    <StackPanel DockPanel.Dock="Top">
+      <TextBlock Text="Freihand" FontSize="18" FontWeight="SemiBold" />
+      <TextBlock x:Name="Recognizer" Margin="0,6,0,0" TextWrapping="Wrap" />
+      <TextBlock x:Name="Phase" Margin="0,4,0,0" FontWeight="SemiBold" TextWrapping="Wrap" />
+      <TextBlock x:Name="Target" Margin="0,4,0,0" TextWrapping="Wrap" />
+      <TextBlock x:Name="Mode" Margin="0,4,0,0" TextWrapping="Wrap" />
+      <TextBlock x:Name="Message" Margin="0,4,0,0" Foreground="DarkRed" TextWrapping="Wrap" />
+      <TextBlock x:Name="Notice" Margin="0,4,0,0" Foreground="DarkOrange" TextWrapping="Wrap" />
+      <TextBlock x:Name="Keys" Margin="0,4,0,0" Foreground="Gray" TextWrapping="Wrap" />
+      <TextBlock Text="Vorschau" Margin="0,10,0,0" Foreground="Gray" />
+      <TextBlock x:Name="Provisional" FontStyle="Italic" TextWrapping="Wrap" />
+      <TextBlock Text="Feste Abschnitte" Margin="0,10,0,4" Foreground="Gray" />
+    </StackPanel>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+      <ItemsControl x:Name="Entries">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <Border BorderBrush="LightGray" BorderThickness="0,0,0,1" Padding="0,4">
+              <StackPanel>
+                <TextBlock Text="{Binding Status}" Foreground="Gray" />
+                <TextBox Text="{Binding Text, Mode=OneWay}" IsReadOnly="True" BorderThickness="0" TextWrapping="Wrap" />
+                <StackPanel Orientation="Horizontal" Margin="0,2,0,0" Visibility="{Binding CopyVisibility}">
+                  <Button Content="In die Zwischenablage" Padding="6,1" Tag="{Binding SegmentId}" Click="OnCopy" />
+                  <!-- Gehaltenen Text ins Diktatfenster holen (P9 Diktatfenster, Kapitel 3.4) -->
+                  <Button Content="Ins Diktatfenster" Padding="6,1" Margin="6,0,0,0" Tag="{Binding SegmentId}" Click="OnToWindow" />
+                </StackPanel>
+              </StackPanel>
+            </Border>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </ScrollViewer>
+  </DockPanel>
+</Window>

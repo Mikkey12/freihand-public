@@ -1,0 +1,7 @@
+﻿<Application x:Class="Freihand.App.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             ShutdownMode="OnExplicitShutdown">
+  <!-- Freihand lebt im Infobereich (P9 Diktatfenster, Kapitel 3.5): Beenden nur über das Menü, nie durch ein Fenster -->
+  <Application.Resources />
+</Application>

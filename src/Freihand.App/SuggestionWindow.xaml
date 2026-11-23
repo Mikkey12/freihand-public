@@ -1,0 +1,30 @@
+<Window x:Class="Freihand.App.SuggestionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Freihand – Vorschlag"
+        Width="560" Height="340" MinWidth="360" MinHeight="200"
+        ThemeMode="System"
+        ShowInTaskbar="True"
+        Topmost="True"
+        WindowStartupLocation="CenterScreen">
+  <!-- Vorschlagsfenster: Korrigieren und Glätten einer Markierung in einem anderen
+       Programm. Enter ersetzt, Esc verwirft; nichts wird ersetzt, solange es nicht ausdrücklich verlangt ist. -->
+  <DockPanel Margin="16">
+    <TextBlock x:Name="Heading" DockPanel.Dock="Top" FontWeight="SemiBold" FontSize="15" />
+    <TextBlock x:Name="RouteLine" DockPanel.Dock="Top" Margin="0,2,0,0" Opacity="0.7" />
+    <TextBlock x:Name="Hint" DockPanel.Dock="Top" Margin="0,8,0,0" TextWrapping="Wrap" Visibility="Collapsed" />
+    <TextBlock x:Name="Warnings" DockPanel.Dock="Top" Margin="0,6,0,0" TextWrapping="Wrap" Foreground="DarkOrange"
+               Visibility="Collapsed" />
+
+    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+      <Button x:Name="ReplaceButton" Content="_Ersetzen (Enter)" MinWidth="120" Click="OnReplace"
+              ToolTip="Ersetzt die Markierung durch den Vorschlag; Strg+Z im Programm holt das Original zurück" />
+      <Button x:Name="CopyButton" Content="_Kopieren" MinWidth="96" Margin="8,0,0,0" Click="OnCopy" Visibility="Collapsed" />
+      <Button x:Name="DiscardButton" Content="_Verwerfen (Esc)" MinWidth="120" Margin="8,0,0,0" Click="OnDiscard" />
+    </StackPanel>
+
+    <ScrollViewer x:Name="PreviewHost" Margin="0,10,0,0" VerticalScrollBarVisibility="Auto" Visibility="Collapsed">
+      <TextBlock x:Name="PreviewText" TextWrapping="Wrap" FontSize="15" AutomationProperties.Name="Vorschlag" />
+    </ScrollViewer>
+  </DockPanel>
+</Window>

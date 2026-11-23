@@ -1,0 +1,62 @@
+<Window x:Class="Freihand.App.PillWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Freihand"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True"
+        ShowActivated="False"
+        ShowInTaskbar="False"
+        Focusable="False"
+        ResizeMode="NoResize"
+        SizeToContent="WidthAndHeight"
+        WindowStartupLocation="Manual">
+  <!-- Schwebende Pille: nimmt nie den Fokus (ShowActivated, Focusable,
+       WS_EX_NOACTIVATE), sonst verliesse sie selbst die Bindung. Farbe nur im Zustandspunkt. -->
+  <Window.Resources>
+    <Style x:Key="PillButton" TargetType="Button">
+      <Setter Property="Focusable" Value="False" />
+      <Setter Property="IsTabStop" Value="False" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Padding" Value="8,2" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border x:Name="Back" CornerRadius="9" Padding="{TemplateBinding Padding}" Background="{DynamicResource PillButtonBack}">
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Back" Property="Background" Value="{DynamicResource PillButtonHover}" />
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+  </Window.Resources>
+  <Border x:Name="Frame" CornerRadius="18" Padding="14,8" Margin="6" BorderThickness="1"
+          Background="{DynamicResource PillBack}" BorderBrush="{DynamicResource PillBorder}"
+          TextElement.Foreground="{DynamicResource PillText}"
+          TextElement.FontFamily="Segoe UI Variable Text, Segoe UI" TextElement.FontSize="13"
+          MouseLeftButtonDown="OnMouseDown" MouseEnter="OnMouseEnter" MouseLeave="OnMouseLeave">
+    <StackPanel>
+      <StackPanel Orientation="Horizontal">
+        <Ellipse x:Name="Dot" Width="10" Height="10" VerticalAlignment="Center" />
+        <TextBlock x:Name="Label" Margin="8,0,0,0" VerticalAlignment="Center" />
+        <Border x:Name="LevelTrack" Width="44" Height="4" CornerRadius="2" Margin="10,0,0,0" VerticalAlignment="Center"
+                Background="{DynamicResource PillButtonBack}">
+          <Border x:Name="LevelBar" Width="0" HorizontalAlignment="Left" CornerRadius="2" Background="{DynamicResource PillText}"
+                  Opacity="0.7" />
+        </Border>
+        <Button x:Name="WindowButton" Content="Diktatfenster" Margin="10,0,0,0" Style="{StaticResource PillButton}"
+                Click="OnWindowButton" />
+        <Button x:Name="CancelButton" Content="Abbrechen" Margin="6,0,0,0" Style="{StaticResource PillButton}"
+                Click="OnCancelButton" />
+      </StackPanel>
+      <!-- Details auf Wunsch: beim Überfahren oder Anklicken -->
+      <ItemsControl x:Name="DetailLines" Margin="18,6,0,0" Visibility="Collapsed" Opacity="0.8" />
+    </StackPanel>
+  </Border>
+</Window>

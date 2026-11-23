@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Plattformunabhängiger Kern: keine Abhängigkeit auf Windows, Oberfläche oder Netzwerk -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <!-- Paket für Windows x64: in den Sperrdateien festgehalten, damit der Paketbau sie nie ändert -->
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+    <RootNamespace>Freihand.Core</RootNamespace>
+  </PropertyGroup>
+
+  <!-- Interne Testanschlüsse und inhaltsfreie P3-Messung (RM01) -->
+  <ItemGroup>
+    <InternalsVisibleTo Include="Freihand.Core.Tests" />
+    <InternalsVisibleTo Include="Freihand.Benchmark" />
+    <!-- Gemeinsame Unicode-Prüfung der JSON-Eingänge, auch für die Pipe des Erkenners (P8) -->
+    <InternalsVisibleTo Include="Freihand.Adapters" />
+  </ItemGroup>
+
+</Project>

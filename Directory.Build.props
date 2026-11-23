@@ -1,0 +1,25 @@
+<Project>
+  <!-- Gemeinsame Einstellungen für alle Projekte (gemeinsame Buildkonfiguration) -->
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <Deterministic>true</Deterministic>
+    <IsPackable>false</IsPackable>
+    <Product>Freihand</Product>
+    <Authors>Freihand</Authors>
+    <Copyright>Freihand</Copyright>
+
+    <!-- Nachvollziehbare Builds (GE-12): Sperrdateien für alle Pakete -->
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+
+    <!-- Windows-Projekte lassen sich auch unter Linux kompilieren, z. B. in Cloud-Sitzungen -->
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+</Project>

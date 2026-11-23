@@ -1,0 +1,54 @@
+# Build
+bin/
+obj/
+artifacts/
+TestResults/
+*.user
+*.suo
+.vs/
+.idea/
+
+# Modelle und Laufzeiten gehören nie ins Repository (WE-14)
+models/
+*.gguf
+*.ggml
+ggml-*.bin
+*.onnx
+*.safetensors
+*.ct2
+
+# Keine Aufnahmen im Repository (SI-02, QM-01)
+recordings/
+*.wav
+*.flac
+*.mp3
+*.ogg
+*.m4a
+*.opus
+
+# Keine Geheimnisse im Repository (SI-03)
+.env
+*.pfx
+*.snk
+*.local.json
+
+# Lokale Claude-Code-Arbeitsdaten (Worktrees, Hilfsskripte)
+.claude/
+
+# Lokale Anwendungsdaten, Schlüssel und Auslieferungsartefakte
+.codex/
+.env.*
+*.pem
+*.key
+*.p12
+*.fpa
+*.dmp
+*.zip
+Pruefaufnahmen/
+Protokoll/
+Wiederherstellung/
+einstellungen.txt
+ziele-gemessen.txt
+woerter.txt
+woerter-gelernt.txt
+anzeige.txt

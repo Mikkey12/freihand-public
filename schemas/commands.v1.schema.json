@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:freihand:schema:commands:1",
+  "title": "Freihand – Befehlsliste, Version 1",
+  "description": "Diktatzeichen, Befehle und Aktionen als Daten (OF-01, Grundentscheid 5, Anhang A). Die App prüft beim Import zusätzlich: eindeutige Bezeichner und Wendungen, keine Geheimnisse, keine ausführbaren Inhalte.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "schemaVersion", "commands"],
+  "properties": {
+    "kind": { "const": "freihand.commands" },
+    "schemaVersion": { "const": 1 },
+    "commands": {
+      "type": "array",
+      "maxItems": 128,
+      "items": { "$ref": "#/$defs/command" }
+    }
+  },
+  "$defs": {
+    "command": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "class", "phrases", "scope", "effect", "description"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+        },
+        "class": {
+          "description": "Diktatzeichen wirken ohne Befehlswort (BA-20); Befehle über Befehlstaste oder Befehlswort (BA-07); Aktionen brauchen eine Freigabe (SI-09) und sind im Pilot nicht vorgesehen.",
+          "enum": ["dictationMark", "command", "action"]
+        },
+        "phrases": {
+          "description": "Gesprochene Wendungen; die erste ist die Hauptform für die Einblendung (BE-16).",
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 48,
+            "pattern": "^\\p{L}+([ '\\-]\\p{L}+)*$"
+          }
+        },
+        "scope": { "enum": ["everywhere", "dictationWindow"] },
+        "effect": {
+          "description": "Feste Wirkungen; Daten wählen nur aus. Es gibt keine Wirkung, die „wörtlich schreiben“ per Stimme beendet (BA-22).",
+          "enum": [
+            "insertPunctuation",
+            "lineBreak",
+            "paragraphBreak",
+            "enterLiteralMode",
+            "deleteLastWord",
+            "deleteLastSentence",
+            "undo",
+            "commit",
+            "rebind",
+            "cancel"
+          ]
+        },
+        "text": {
+          "description": "Das Satzzeichen, nur bei insertPunctuation (BA-20).",
+          "enum": [",", ".", "?", "!", ":", ";"]
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "pattern": "^\\S(.*\\S)?$"
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "effect": { "enum": ["insertPunctuation", "lineBreak", "paragraphBreak"] } } },
+          "then": { "properties": { "class": { "const": "dictationMark" } } },
+          "else": { "properties": { "class": { "const": "command" } } }
+        },
+        {
+          "if": { "properties": { "effect": { "const": "insertPunctuation" } } },
+          "then": { "required": ["text"] },
+          "else": { "not": { "required": ["text"] } }
+        },
+        {
+          "if": { "properties": { "effect": { "enum": ["enterLiteralMode", "cancel"] } } },
+          "then": { "properties": { "scope": { "const": "everywhere" } } }
+        },
+        {
+          "description": "Korrektur, Rückgängig und Übernehmen nur im Diktatfenster; Löschen ausserhalb wäre eine Aktion (Anhang A, SI-09).",
+          "if": { "properties": { "effect": { "enum": ["deleteLastWord", "deleteLastSentence", "undo", "commit"] } } },
+          "then": { "properties": { "scope": { "const": "dictationWindow" } } }
+        }
+      ]
+    }
+  }
+}

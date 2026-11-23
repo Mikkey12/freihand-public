@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Tests für Kern und Adapter; laufen unter Linux und Windows -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Freihand.Core\Freihand.Core.csproj" />
+    <ProjectReference Include="..\..\src\Freihand.Adapters\Freihand.Adapters.csproj" />
+    <ProjectReference Include="..\..\src\Freihand.Online\Freihand.Online.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="../../tools/Freihand.Zielprobe/Fakten.cs" Link="Pr70Harness/Fakten.cs" />
+    <Compile Include="../../tools/Freihand.Zielprobe/Optionen.cs" Link="Pr70Harness/Optionen.cs" />
+    <Compile Include="../../tools/Freihand.Zielprobe/Schreiben.cs" Link="Pr70Harness/Schreiben.cs" />
+    <Compile Include="../../tools/Freihand.Zielprobe/Logik.cs" Link="Pr70Harness/Logik.cs" />
+    <Compile Include="../../tools/Freihand.Zielprobe/Messen.cs" Link="Pr70Harness/Messen.cs" />
+    <None Include="../Freihand.Windows.Tests/Fixtures/au01-testtext.txt" Link="Fixtures/au01-testtext.txt" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

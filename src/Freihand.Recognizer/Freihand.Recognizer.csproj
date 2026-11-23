@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Erkennungsprozess (P8): whisper.cpp über Whisper.net und Silero VAD; kein Netzwerk (WE-07) -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <!-- Paket für Windows x64: in den Sperrdateien festgehalten, damit der Paketbau sie nie ändert -->
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+    <RootNamespace>Freihand.Recognizer</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Whisper.net" />
+    <PackageReference Include="Whisper.net.Runtime" />
+    <PackageReference Include="Whisper.net.Runtime.Cuda.Windows" />
+    <PackageReference Include="Whisper.net.Runtime.Vulkan" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Freihand.Adapters\Freihand.Adapters.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Freihand.Windows.Tests" />
+  </ItemGroup>
+
+</Project>

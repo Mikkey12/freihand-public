@@ -1,0 +1,22 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Freihand.Adapters/Freihand.Adapters.csproj" />
+    <Project Path="src/Freihand.App/Freihand.App.csproj" />
+    <Project Path="src/Freihand.Core/Freihand.Core.csproj" />
+    <Project Path="src/Freihand.Online/Freihand.Online.csproj" />
+    <Project Path="src/Freihand.Recognizer/Freihand.Recognizer.csproj" />
+    <Project Path="src/Freihand.Windows/Freihand.Windows.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Freihand.App.WindowTests/Freihand.App.WindowTests.csproj" />
+    <Project Path="tests/Freihand.Benchmark.Tests/Freihand.Benchmark.Tests.csproj" />
+    <Project Path="tests/Freihand.Core.Tests/Freihand.Core.Tests.csproj" />
+    <Project Path="tests/Freihand.Windows.Tests/Freihand.Windows.Tests.csproj" />
+    <Project Path="tests/Freihand.Windows.TestTarget/Freihand.Windows.TestTarget.csproj" />
+    <Project Path="tests/Freihand.Zielprobe.Tests/Freihand.Zielprobe.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/Freihand.Benchmark/Freihand.Benchmark.csproj" />
+    <Project Path="tools/Freihand.Zielprobe/Freihand.Zielprobe.csproj" />
+  </Folder>
+</Solution>

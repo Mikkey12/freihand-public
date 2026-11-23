@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Messwerkzeug für die Zielprogramm-Messungen WM03/WM04; tippt in fremde Fenster -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <RootNamespace>Freihand.Zielprobe</RootNamespace>
+    <!-- Wird mit Freihand ausgeliefert („Feld messen“); dieselbe Laufzeitkennung wie die App für das Geschäftspaket -->
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+    <!-- BSTR des Feldinhalts freigeben -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Freihand.Zielprobe.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Freihand.Windows\Freihand.Windows.csproj" />
+    <ProjectReference Include="..\..\src\Freihand.Core\Freihand.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Testtext AU-01 (2000 Zeichen), dieselbe Datei wie in den Windows-Tests -->
+    <None Include="..\..\tests\Freihand.Windows.Tests\Fixtures\au01-testtext.txt" Link="Fixtures\au01-testtext.txt" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

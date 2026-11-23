@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Fenster der App unsichtbar geprüft (PR #52): kein Zeigen, kein Fokus, keine Eingaben, keine Steuerung; kein Desktoptest -->
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <Using Include="Xunit" />
+    <!-- WPF-Projekte setzen System.IO nicht global; die verlinkten Hilfen der Kerntests brauchen es -->
+    <Using Include="System.IO" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Freihand.App\Freihand.App.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Testzeit, Ablage im Arbeitsspeicher und Attrappe statt DPAPI aus den Kerntests (Gegenprobe zu PR #53) -->
+    <Compile Include="..\Freihand.Core.Tests\Recovery\ManualTimeProvider.cs" Link="Recovery\ManualTimeProvider.cs" />
+    <Compile Include="..\Freihand.Core.Tests\Recovery\InMemoryRecoveryFileSystem.cs" Link="Recovery\InMemoryRecoveryFileSystem.cs" />
+    <Compile Include="..\Freihand.Core.Tests\Recovery\FakeDataProtector.cs" Link="Recovery\FakeDataProtector.cs" />
+  </ItemGroup>
+
+</Project>

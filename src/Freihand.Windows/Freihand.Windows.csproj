@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Windows-Schicht: Tastenkombinationen, UI Automation, Einfügen, Audio, DPAPI, Start des Erkenners -->
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <!-- Paket für Windows x64: in den Sperrdateien festgehalten, damit der Paketbau sie nie ändert -->
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+    <RootNamespace>Freihand.Windows</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Aufnahme über WASAPI (P8-Konzept, Kapitel 5.2 und 10.5) -->
+    <PackageReference Include="NAudio.Wasapi" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Windows-Aufrufe als Quellgenerator; nur die in NativeMethods.txt genannten (P7-Konzept, Kapitel 5.10) -->
+    <PackageReference Include="Microsoft.Windows.CsWin32" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Freihand.Windows.Tests" />
+    <!-- Messwerkzeug für WM03/WM04: liest mit dem echten UiaTargetInspector und derselben UIA-Hülle -->
+    <InternalsVisibleTo Include="Freihand.Zielprobe" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Freihand.Core\Freihand.Core.csproj" />
+    <ProjectReference Include="..\Freihand.Adapters\Freihand.Adapters.csproj" />
+  </ItemGroup>
+
+</Project>

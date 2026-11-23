@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Online-Dienste der Beta: Korrigieren und Glätten über die Claude-API. Eigenes
+       Projekt, damit der Erkennungsprozess nie eine Netzwerkbibliothek erreicht (R48, WE-07); nur die App nutzt es. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <!-- Paket für Windows x64: in den Sperrdateien festgehalten, damit der Paketbau sie nie ändert -->
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+    <RootNamespace>Freihand.Online</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Anthropic" />
+    <!-- Anfrage an Claude ohne Netz prüfen -->
+    <InternalsVisibleTo Include="Freihand.Core.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Freihand.Adapters\Freihand.Adapters.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Umsetzungen der Erkennungs- und Umformschnittstellen (WE-02), plattformunabhängig -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <!-- Paket für Windows x64: in den Sperrdateien festgehalten, damit der Paketbau sie nie ändert -->
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+    <RootNamespace>Freihand.Adapters</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- WDL-Resampler für die Aufnahme (P8-Konzept, Kapitel 5.2); MIT, plattformunabhängig -->
+    <PackageReference Include="NAudio.Core" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Freihand.Core\Freihand.Core.csproj" />
+  </ItemGroup>
+
+</Project>

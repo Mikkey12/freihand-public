@@ -1,0 +1,82 @@
+Freihand – Geschäftsausgabe (Prototyp)
+======================================
+
+Diese Ausgabe arbeitet nur auf dem Gerät: kein Internet, keine Online-Dienste, kein Korrigieren oder Glätten per KI.
+Sie braucht keine Installation und keine Administratorrechte. Für die IT: IT-Merkblatt.md in diesem Ordner.
+
+Zwei Pakete
+  Freihand-Programm-<Datum>-<Stand>.zip   das Programm; kommt bei jedem Update neu
+  Freihand-Modelle-<Datum>.zip            die Sprachmodelle (etwa 1 GB); nur einmal, bleiben bei Updates
+Neben jedem ZIP liegt eine Datei .sha256 mit seiner Prüfsumme. Prüfen: Im Explorer den Ordner mit den ZIP-Dateien
+öffnen, Rechtsklick auf eine freie Stelle, „Im Terminal öffnen“, und diese Zeile eingeben:
+  Get-ChildItem *.zip | ForEach-Object { $_.Name + ": " + ((Get-FileHash $_.FullName).Hash -eq (Get-Content ($_.FullName + ".sha256")).Split(" ")[0]) }
+Bei jedem ZIP muss „True“ stehen.
+
+Einrichten (einmal)
+1. Im Explorer in die Adresszeile  %LOCALAPPDATA%  eingeben und Enter drücken. Gibt es darin keinen Ordner
+   „Programs“, ihn anlegen (Neu, Ordner, „Programs“).
+2. Den Ordner „Programs“ öffnen. In einem zweiten Explorer-Fenster das Programm-ZIP doppelklicken: Darin steht der
+   Ordner „Freihand“. Ihn kopieren (Strg+C) und in „Programs“ einfügen (Strg+V). Danach gibt es
+   %LOCALAPPDATA%\Programs\Freihand\Freihand.exe .
+3. Das Modell-ZIP doppelklicken: Darin steht ebenfalls ein Ordner „Freihand“. Ihn kopieren. Dann in die Adresszeile
+   wieder  %LOCALAPPDATA%  eingeben, Enter, und dort einfügen (nicht in „Programs“). Gibt es dort schon einen Ordner
+   „Freihand“, fragt Windows vielleicht nach dem Zusammenführen: bestätigen. Danach liegen die Modelle in
+   %LOCALAPPDATA%\Freihand\Modelle .
+   Öffnet der Doppelklick auf ein ZIP ein anderes Programm (z. B. 7-Zip): Rechtsklick auf das ZIP, „Alle extrahieren …“,
+   „Extrahieren“, und aus dem entpackten Ordner den Ordner „Freihand“ wie beschrieben kopieren.
+4. In  %LOCALAPPDATA%\Programs\Freihand  die Datei  Freihand.exe  starten. Das Symbol erscheint im Infobereich unten
+   rechts. Meldet Freihand „Sprachmodelle fehlen“, liegt das Modell-ZIP nicht am richtigen Ort (Schritt 3).
+5. Rechtsklick auf das Symbol: „Mit Windows starten“ anhaken.
+
+Warnt oder blockiert Windows oder der Virenschutz: nichts umgehen. Bildschirmfoto machen und melden.
+
+Tasten
+  Strg+Alt+Y   Aufnahme ein und aus
+  Strg+Alt+Q   Abbrechen
+  Strg+Alt+D   Diktatfenster
+  Strg+Alt+B   Problem merken (Marke im Protokoll)
+  Strg+Alt+X   Befehlstaste
+Mikrofon: Rechtsklick auf das Symbol, „Mikrofon“.
+
+Modell
+Freihand bringt zwei Modelle mit: „Klein – schnell“ (Start) und „Gross – genauer“. Wechseln: Rechtsklick auf das Symbol,
+„Modell“. Die Wahl gilt nach einem Neustart: Rechtsklick, „Beenden“, dann  Freihand.exe  im Ordner
+%LOCALAPPDATA%\Programs\Freihand  wieder starten. Die Auswertung zeigt den Verzug getrennt nach Modell.
+
+Feld messen
+In Programmen, die Freihand noch nicht kennt (z. B. Teams, Dynamics), schreibt es vorsichtig ein Zeichen pro Schritt.
+Rechtsklick auf das Symbol, „Erweitert“, „Feld messen …“: Das Fenster erklärt, worauf zu achten ist. Freihand misst dann
+in einem leeren Feld, wie schnell es dort fehlerfrei schreiben kann, und merkt sich das sofort, ohne neues Paket. Kommt
+der Prüftext verändert an, kommen zwei tiefe Töne: das Testfeld selbst leeren (Strg+A, Entf) und nichts mehr anfassen;
+die Messung geht mit einer kleineren Stufe weiter. Nur Felder nehmen, die nicht abgeschickt oder gespeichert werden
+(in Dynamics ein entbehrlicher Testdatensatz). Die gemessenen Felder stehen in  %LOCALAPPDATA%\Freihand\ziele-gemessen.txt ; eine Zeile löschen =
+wieder der bisherige Wert.
+
+Protokoll und Messung
+Freihand schreibt je Tag eine Datei nach  %LOCALAPPDATA%\Freihand\Protokoll  – nur Zustände und Zahlen, nie Text.
+Darin steht auch, wie lange es vom Ende eines Satzes bis zum Text im Programm dauert. Auswertung im Terminal
+(Rechtsklick auf Start, „Terminal“):
+  powershell -File "$env:LOCALAPPDATA\Programs\Freihand\Freihand-Auswertung.ps1"
+Falls Windows die Ausführung des Skripts blockiert, die geltende Richtlinie beachten. Das Protokoll lässt sich lokal mit einem Texteditor öffnen.
+
+Aktualisieren (nur das Programm)
+1. Freihand über das Symbol beenden (Rechtsklick, „Beenden“).
+2. Nur den Ordner „Freihand“ IN „Programs“ löschen, also  %LOCALAPPDATA%\Programs\Freihand .
+   Nie den Ordner  %LOCALAPPDATA%\Freihand  löschen: Dort liegen Modelle, Einstellungen, gemessene Felder, Wörter und
+   gerettete Texte.
+3. Das neue Programm-ZIP wie unter „Einrichten“, Schritt 2, einfügen und  Freihand.exe  starten.
+Modelle, Einstellungen, gemessene Felder, Wörter, Sicherungen und Protokoll in  %LOCALAPPDATA%\Freihand  bleiben.
+Ein neues Modell-ZIP gibt es nur, wenn sich die Modelle ändern; dann nur den Ordner  %LOCALAPPDATA%\Freihand\Modelle
+löschen und das neue Modell-ZIP wie unter „Einrichten“, Schritt 3, einfügen.
+
+Entfernen
+Rechtsklick, „Mit Windows starten“ abhaken, „Beenden“; dann die Ordner  %LOCALAPPDATA%\Programs\Freihand  und
+%LOCALAPPDATA%\Freihand  löschen. Freihand selbst hinterlässt sonst nichts. Windows führt eigene Listen (z. B.
+Mikrofonnutzung je Programm, Symbole im Infobereich), allenfalls auch Speicherabbilder und einen Zwischenspeicher des
+Grafiktreibers.
+
+Nur das Programm entfernen (Daten behalten)
+Wie oben beenden, dann nur den Ordner  %LOCALAPPDATA%\Programs\Freihand  löschen. Im Ordner  %LOCALAPPDATA%\Freihand
+bleiben die Modelle, die Wörterliste, gemessene Felder, gerettete Entwürfe und das Tagesprotokoll; ein späteres
+Programmpaket übernimmt sie. Das Tagesprotokoll löscht Freihand nach 14 Tagen selbst, beim Start und im Betrieb einmal
+am Tag.
